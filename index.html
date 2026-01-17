@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 Boutique Mom Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --pink:#f8c1d9;
+  --dark-pink: #b0005a;
+  --yellow:#f2c94c;
+  --blue:#cfe9f6;
+  --text:#333;
+}
+
+/* THEME CLASSES */
+body.theme-pink { --pink: #f8c1d9; --dark-pink: #b0005a; --blue: #cfe9f6; }
+body.theme-sage { --pink: #cedeca; --dark-pink: #4f6b4a; --blue: #e8f0e6; }
+body.theme-lavender { --pink: #d9d1f8; --dark-pink: #5a4f91; --blue: #f0ecf9; }
+
+/* GENERAL */
+*{box-sizing:border-box}
+body{ margin:0; font-family: 'Poppins', sans-serif; background:var(--blue); color:var(--text); transition: background 0.5s ease; }
+
+/* PHYSICAL DIGITAL COVER STYLE */
+header.cover { 
+  position:fixed; inset:0; z-index:999; 
+  display:flex; justify-content:center; align-items:center; 
+  background: #e5e5e5 url('https://www.transparenttextures.com/patterns/wood-pattern.png'); /* Tabletop texture */
+}
+
+.planner-book {
+  width: 90%; max-width: 450px; height: 600px;
+  background: #e8dcc4; /* Linen/Leather color */
+  background-image: url('https://www.transparenttextures.com/patterns/linen-design.png');
+  border-radius: 10px 30px 30px 10px;
+  box-shadow: 20px 20px 60px rgba(0,0,0,0.3), inset 10px 0 15px rgba(0,0,0,0.1);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: relative; border: 1px solid #d4c4a8;
+}
+
+/* The Gold Foil Label */
+.gold-label {
+  background: #fff;
+  padding: 40px 20px;
+  border: 4px double #c5a059; /* Gold border */
+  text-align: center;
+  width: 70%;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.gold-label h1 { 
+  font-family: 'Playfair Display', serif; 
+  font-size: 60px; margin: 0; color: #b08d4a; letter-spacing: 5px; 
+}
+
+.gold-label p { 
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 18px; margin: 0; color: #666; 
+}
+
+/* The Leather Strap/Elastic */
+.planner-strap {
+  position: absolute; right: 40px; top: 0; bottom: 0; width: 15px;
+  background: #333; opacity: 0.8; box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+}
+
+.enter-btn { 
+  margin-top: 40px; padding: 12px 30px; 
+  background: #b08d4a; color: white; border-radius: 5px; 
+  font-weight: bold; cursor: pointer; border: none; 
+  letter-spacing: 2px; text-transform: uppercase;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* NAVIGATION */
+nav{ position:sticky; top:0; background:white; display:none; justify-content:center; flex-wrap:wrap; padding:10px; z-index:10; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+nav a{ margin:5px; padding:8px 15px; background:var(--pink); border-radius:20px; font-weight:bold; cursor:pointer; font-size: 14px; text-decoration: none; color: inherit; transition: 0.3s; }
+nav a:hover { background: var(--dark-pink); color: white; }
+
+/* Home button specific style */
+.nav-home { background: #b08d4a !important; color: white !important; }
+
+.section{display:none;padding:16px}
+.section.active{display:block}
+.card{ max-width:850px; margin:20px auto; background:white; border-radius:20px; padding:30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); position: relative; }
+.theme-box { display: flex; gap: 10px; margin-top: 10px; }
+.theme-btn { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.shopping-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.shop-cat { background: var(--blue); padding: 15px; border-radius: 12px; }
+.shop-item { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: 14px; }
+.shop-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--dark-pink); }
+.month-index-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; margin-top: 20px; }
+.month-card { background: var(--pink); padding: 25px 10px; border-radius: 15px; text-align: center; font-weight: bold; cursor: pointer; transition: 0.3s; color: var(--text); }
+.calendar-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:8px; margin-top: 20px; }
+.calendar-grid button{ padding:15px 5px; border:none; border-radius:10px; background:#f9f9f9; font-weight:bold; cursor:pointer; font-size: 16px; transition: 0.2s; }
+.section-img { width: 100%; height: 180px; object-fit: cover; border-radius: 15px; margin-bottom: 20px; }
+.back-btn { cursor:pointer; color: var(--dark-pink); font-weight: bold; margin-bottom: 15px; display: inline-block; }
+input, textarea { width:100%; padding:12px; border-radius:12px; border:1px solid #eee; margin-bottom:15px; font-family: inherit; }
+.export-btn { background: #333; color: white; padding: 12px 24px; border-radius: 25px; border: none; cursor: pointer; font-weight: bold; margin: 10px 0; width: 100%; }
+.habit-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 10px; background: var(--blue); border-radius: 12px; }
+.circle { width: 22px; height: 22px; border: 2px solid var(--dark-pink); border-radius: 50%; cursor: pointer; display: inline-block; margin-left: 5px; }
+.circle.filled { background: var(--dark-pink); }
+table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+th { text-align: left; background: #f9f9f9; padding: 10px; border-bottom: 2px solid var(--pink); }
+td { padding: 8px; border-bottom: 1px solid #eee; }
+
+@media print {
+  nav, .back-btn, button, .export-btn, .cover, .section-img, .theme-box, .planner-strap { display: none !important; }
+  body { background: white !important; }
+  .section { display: none !important; }
+  .section.active { display: block !important; }
+  .card { box-shadow: none !important; border: 1px solid #eee !important; width: 100%; }
+}
+</style>
+</head>
+<body class="theme-pink">
+
+<header class="cover" id="cover">
+  <div class="planner-book">
+    <div class="planner-strap"></div>
+    <div class="gold-label">
+        <h1>2026</h1>
+        <p>The Ultimate Mom Planner</p>
+    </div>
+    <button class="enter-btn" onclick="startPlanner()">Open Planner</button>
+  </div>
+</header>
+
+<nav id="mainNav">
+  <a class="nav-home" onclick="goHome()">🏠 Home</a>
+  <a onclick="show('calendar-index')">🗓️ Calendar</a>
+  <a onclick="show('reminders')">🔔 Reminders</a>
+  <a onclick="show('monthly-budget')">💰 Budget</a>
+  <a onclick="show('shopping-hub')">🛒 Home & Shop</a>
+  <a onclick="show('kids-hub')">👶 Kids</a>
+  <a onclick="show('mom-sanctuary')">🌸 Sanctuary</a>
+  <a onclick="show('holiday-gift')">🎁 Gifts</a>
+  <a onclick="show('reflections')">📝 Reflection</a>
+</nav>
+
+<div id="calendar-index" class="section active">
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=800&q=60" class="section-img">
+    <h2>2026 Monthly Index</h2>
+    <div class="month-index-grid" id="monthIndex"></div>
+  </div>
+</div>
+
+<div id="month-view" class="section">
+  <div class="card">
+    <div class="back-btn" onclick="show('calendar-index')">⬅ Back to Year Index</div>
+    <h2 id="currentMonthTitle">Month Name</h2>
+    <div class="calendar-grid" id="monthGrid"></div>
+  </div>
+</div>
+
+<div id="daily-view" class="section">
+  <div class="card">
+    <div class="back-btn" id="backToMonth">⬅ Back to Month</div>
+    <input id="dDate" style="font-size: 24px; font-weight: bold; border: none; color: var(--dark-pink); background:transparent;" readonly>
+    <textarea id="dailyTodo" placeholder="✨ To-Do List" rows="8"></textarea>
+    <textarea id="dailyMeal" placeholder="🍲 Meal Plan" rows="3"></textarea>
+    <button class="export-btn" onclick="window.print()">📥 Export PDF</button>
+  </div>
+</div>
+
+<div id="reminders" class="section">
+  <div class="card">
+    <div class="back-btn" onclick="show('calendar-index')">⬅ Back</div>
+    <img src="https://images.unsplash.com/photo-1506784365847-bbad939e9335?auto=format&fit=crop&w=800&q=60" class="section-img">
+    <h2>Reminders & Alerts 🔔</h2>
+    <p><small>Note: Keep the tab open to receive sound alerts.</small></p>
+    <div style="display:flex; gap:10px;">
+        <input id="remText" placeholder="Reminder name...">
+        <input id="remTime" type="time" style="width:150px;">
+        <button class="enter-btn" style="margin:0; padding:10px; border-radius:12px;" onclick="addReminder()">Add</button>
+    </div>
+    <div id="reminderList" style="margin-top:20px;"></div>
+  </div>
+</div>
+
+<div id="monthly-budget" class="section">
+  <div class="card">
+    <div class="back-btn" onclick="show('calendar-index')">⬅ Back</div>
+    <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=60" class="section-img">
+    <h2>Monthly Budget Tracker 💰</h2>
+    <table>
+      <thead><tr><th>Category</th><th>Planned</th><th>Actual</th><th>Diff</th></tr></thead>
+      <tbody id="budgetBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div id="shopping-hub" class="section">
+    <div class="card">
+      <div class="back-btn" onclick="show('calendar-index')">⬅ Back</div>
+      <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=60" class="section-img">
+      <h2>Master Shopping List 🛒</h2>
+      <div class="shopping-grid">
+        <div class="shop-cat"><strong>🥦 Fresh Produce</strong><textarea id="shopProduce" rows="3"></textarea></div>
+        <div class="shop-cat"><strong>🧀 Dairy & Protein</strong><textarea id="shopDairy" rows="3"></textarea></div>
+      </div>
+      <h2 style="margin-top:30px;">🏠 Home Reset Checklist</h2>
+      <div id="homeChecklist"></div>
+    </div>
+</div>
+
+<div id="kids-hub" class="section">
+    <div class="card">
+      <div class="back-btn" onclick="show('calendar-index')">⬅ Back</div>
+      <img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=800&q=60" class="section-img">
+      <h2>Kids Planner 👶</h2>
+      <textarea id="kSchool" placeholder="School Events & Deadlines" rows="5"></textarea>
+      <textarea id="kHealth" placeholder="Medicine & Appointments" rows="5"></textarea>
+    </div>
+</div>
+
+<div id="mom-sanctuary" class="section">
+  <div class="card">
+    <div class="back-btn" onclick="show('calendar-index')">⬅ Back</div>
+    <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=60" class="section-img">
+    <h2>Personalize Your Planner 🎨</h2>
+    <div class="theme-box">
+        <div class="theme-btn" style="background:#f8c1d9;" onclick="setTheme('pink')"></div>
+        <div class="theme-btn" style="background:#cedeca;" onclick="setTheme('sage')"></div>
+        <div class="theme-btn" style="background:#d9d1f8;" onclick="setTheme('lavender')"></div>
+    </div>
+    <h2 style="margin-top:30px;">Daily Habit Tracker ✨</h2>
+    <div id="habitContainer"></div>
+    <h2 style="margin-top:30px;">School-Hours Sanctuary 🌸</h2>
+    <textarea id="sAct" placeholder="Self-care goals..." rows="4"></textarea>
+  </div>
+</div>
+
+<div id="holiday-gift" class="section">
+    <div class="card">
+      <div class="back-btn" onclick="show('calendar-index')">⬅ Back</div>
+      <img src="https://images.unsplash.com/photo-1512909006721-3d6018887383?auto=format&fit=crop&w=800&q=60" class="section-img">
+      <h2>🎁 Holiday & Gift Planner</h2>
+      <textarea id="giftList" placeholder="Name - Gift Idea - Budget" rows="12"></textarea>
+    </div>
+</div>
+
+<div id="reflections" class="section">
+    <div class="card">
+      <div class="back-btn" onclick="show('calendar-index')">⬅ Back</div>
+      <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=800&q=60" class="section-img">
+      <h2>📝 2026 Yearly Reflection</h2>
+      <textarea id="refHigh" placeholder="High points..." rows="4"></textarea>
+      <textarea id="refGoals" placeholder="2027 Goals..." rows="4"></textarea>
+      <button class="export-btn" onclick="window.print()">📥 Save Memories PDF</button>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const categories = ["Housing", "Groceries", "Utilities", "Kids", "Fun"];
+  const homeTasks = ["Dishwasher Reset", "Laundry Load", "Kitchen Counter Clear", "Vacuum Main Area"];
+  
+  const save = (id, val) => localStorage.setItem('planner26_' + id, val);
+  const load = (id) => localStorage.getItem('planner26_' + id) || "";
+
+  window.setTheme = (theme) => { document.body.className = 'theme-' + theme; save('current_theme', theme); };
+  const savedTheme = load('current_theme'); if(savedTheme) setTheme(savedTheme);
+
+  window.show = (id) => {
+    document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    window.scrollTo(0,0);
+  };
+
+  // HOME LOGIC
+  window.startPlanner = () => {
+    document.getElementById("cover").style.display = "none";
+    document.getElementById("mainNav").style.display = "flex";
+    if ("Notification" in window) { Notification.requestPermission(); }
+  };
+
+  window.goHome = () => {
+    document.getElementById("cover").style.display = "flex";
+    document.getElementById("mainNav").style.display = "none";
+  };
+
+  // NOTIFICATION BRAIN
+  function checkAssistant() {
+    const now = new Date();
+    const curTime = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+    let list = JSON.parse(load('rems') || "[]");
+    let changed = false;
+
+    list.forEach(rem => {
+      if (rem.tm === curTime && !rem.triggered) {
+        // Play Sound
+        const chime = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        chime.play().catch(e => console.log("Sound interaction required"));
+        
+        // Push Notification
+        if (Notification.permission === "granted") {
+          new Notification("2026 Mom Planner", { body: rem.t });
+        } else {
+          alert("Reminder: " + rem.t);
+        }
+        rem.triggered = true;
+        changed = true;
+      }
+    });
+    if(changed) save('rems', JSON.stringify(list));
+  }
+  setInterval(checkAssistant, 30000);
+
+  const homeDiv = document.getElementById('homeChecklist');
+  homeTasks.forEach(task => {
+    const item = document.createElement('div');
+    item.className = 'shop-item';
+    const checked = load('home_'+task) === 'true' ? 'checked' : '';
+    item.innerHTML = `<input type="checkbox" ${checked} onchange="save('home_${task}', this.checked)"> <span>${task}</span>`;
+    homeDiv.appendChild(item);
+  });
+
+  const indexDiv = document.getElementById('monthIndex');
+  months.forEach((m, i) => {
+    const div = document.createElement('div');
+    div.className = 'month-card';
+    div.textContent = m;
+    div.onclick = () => openMonth(i);
+    indexDiv.appendChild(div);
+  });
+
+  function openMonth(index) {
+    const mName = months[index];
+    document.getElementById('currentMonthTitle').textContent = mName + " 2026";
+    const grid = document.getElementById('monthGrid');
+    grid.innerHTML = "";
+    const days = new Date(2026, index + 1, 0).getDate();
+    for (let d = 1; d <= days; d++) {
+        const b = document.createElement('button');
+        const dateStr = `${mName} ${d}, 2026`;
+        b.textContent = d;
+        if (load(dateStr + "_todo")) b.style.background = "var(--pink)";
+        b.onclick = () => {
+            document.getElementById('dDate').value = dateStr;
+            document.getElementById('dailyTodo').value = load(dateStr + "_todo");
+            document.getElementById('dailyMeal').value = load(dateStr + "_meal");
+            document.getElementById('backToMonth').onclick = () => openMonth(index);
+            show('daily-view');
+        };
+        grid.appendChild(b);
+    }
+    show('month-view');
+  }
+
+  document.getElementById('dailyTodo').addEventListener('input', (e) => save(document.getElementById('dDate').value + "_todo", e.target.value));
+  document.getElementById('dailyMeal').addEventListener('input', (e) => save(document.getElementById('dDate').value + "_meal", e.target.value));
+
+  const tbody = document.getElementById('budgetBody');
+  categories.forEach(cat => {
+    const row = document.createElement('tr');
+    row.innerHTML = `<td>${cat}</td><td><input class="b-in p" type="number" value="${load(cat+'_p')||0}"></td><td><input class="b-in a" type="number" value="${load(cat+'_a')||0}"></td><td id="${cat}_diff">$0</td>`;
+    tbody.appendChild(row);
+  });
+  const calc = () => {
+    document.querySelectorAll('.b-in').forEach(i => {
+        const row = i.closest('tr');
+        const p = parseFloat(row.querySelector('.p').value)||0, a = parseFloat(row.querySelector('.a').value)||0;
+        row.querySelector('[id$="_diff"]').textContent = "$" + (p - a).toFixed(2);
+        save(row.cells[0].textContent + (i.classList.contains('p')?'_p':'_a'), i.value);
+    });
+  };
+  tbody.addEventListener('input', calc); calc();
+
+  const habits = ["💧 Water Intake", "🧘 Me-Time", "📖 Reading"];
+  const hCont = document.getElementById('habitContainer');
+  habits.forEach(h => {
+    const row = document.createElement('div');
+    row.className = 'habit-row';
+    row.innerHTML = `<span>${h}</span><div class=\"circles\"></div>`;
+    for(let i=0; i<8; i++){
+        const c = document.createElement('div'); c.className = 'circle';
+        if(load(h+i)==='true') c.classList.add('filled');
+        c.onclick = () => { c.classList.toggle('filled'); save(h+i, c.classList.contains('filled')); };
+        row.querySelector('.circles').appendChild(c);
+    }
+    hCont.appendChild(row);
+  });
+
+  window.addReminder = () => {
+    const t = document.getElementById('remText').value, tm = document.getElementById('remTime').value;
+    if(!t || !tm) return;
+    const list = JSON.parse(load('rems') || "[]");
+    list.push({t, tm, triggered: false}); save('rems', JSON.stringify(list)); renderRems();
+  };
+  function renderRems() {
+    const list = JSON.parse(load('rems') || "[]");
+    document.getElementById('reminderList').innerHTML = list.map((r,i) => `<div class=\"habit-row\"><span>${r.tm} - ${r.t}</span><button onclick=\"delRem(${i})\">❌</button></div>`).join('');
+  }
+  window.delRem = (i) => {
+    const list = JSON.parse(load('rems')||"[]");
+    list.splice(i,1); save('rems', JSON.stringify(list)); renderRems();
+  };
+  renderRems();
+
+  document.querySelectorAll('textarea:not(#dailyTodo):not(#dailyMeal)').forEach(t => {
+    t.value = load(t.id);
+    t.addEventListener('input', () => save(t.id, t.value));
+  });
+});
+</script>
+</body>
+</html>
